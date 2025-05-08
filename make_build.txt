@@ -1,0 +1,3 @@
+pyinstaller --onefile --windowed --icon=D:\pyTest\assets\logo.ico --add-data "assets/logo.png;assets" file_selector.py
+
+pyinstaller file_selector.spec
