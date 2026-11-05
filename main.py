@@ -1,4 +1,3 @@
-import fitz
 import pymupdf as pdf
 from collections import Counter
 import pandas as pd

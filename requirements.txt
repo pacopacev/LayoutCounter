@@ -1,3 +1,5 @@
 pymupdf
 pandas
 PyQt6
+openpyxl
+pyinstaller
