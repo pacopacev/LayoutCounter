@@ -25,14 +25,53 @@
 # text = page.get_text('text')
 
 
-from PIL import Image
-from collections import Counter
+# from PIL import Image
+# from collections import Counter
 
-def dominant_colors(path, n=5):
-    img = Image.open(path).convert("RGB")
-    # skip near-white / near-black background pixels
-    px = [p for p in img.getdata() if not (min(p) > 230 or max(p) < 30)]
-    return Counter(px).most_common(n)
+# def dominant_colors(path, n=5):
+#     img = Image.open(path).convert("RGB")
+#     # skip near-white / near-black background pixels
+#     px = [p for p in img.getdata() if not (min(p) > 230 or max(p) < 30)]
+#     return Counter(px).most_common(n)
 
-for f in ["Image1.png", "Image2.png"]:
-    print(f, dominant_colors(f))
+# for f in ["Image1.png", "Image2.png"]:
+#     print(f, dominant_colors(f))
+
+import pymupdf
+import os
+
+OUT_DIR = "screenshots"
+
+os.makedirs(OUT_DIR, exist_ok=True)   # safe to call repeatedly, creates parents
+
+# Open the PDF
+doc = pymupdf.open("boarding-pass.pdf")
+# print(len(doc))
+
+for i, page in enumerate(doc):
+    
+    # print(i, page)
+
+# 1. Search for the text. search_for() returns a list of Rect objects.
+    needle = ["FR5472", "AKPCWG", "Sofia"]
+
+    for ii in needle:
+
+        rects = page.search_for(ii)
+        # print(f"{rects}\n")
+
+# 2. Iterate over all found rectangles
+        for iii, rect in enumerate(rects):
+    # 3. Capture a screenshot of the rectangular region
+    # You can add a margin by expanding the rect if needed:
+            rect = rect + (-50, -50, 50, 50) 
+            pix = page.get_pixmap(clip=rect, dpi=150) 
+    
+    # 4. Save the image
+            # filename = f"page{i}_{ii}_match{iii}.png"
+            filename = os.path.join(OUT_DIR, f"page{i}_{ii}_match{iii}.png")
+            pix.save(filename)
+
+            print(f"Saved screenshot for match {iii+1} at {rect}")
+
+doc.close()
